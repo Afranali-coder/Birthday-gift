@@ -1,0 +1,6 @@
+{
+  "name": "Firoz's Birthday Surprise",
+  "description": "A colorful, vibrant 3D birthday surprise and celebration vault for Firoz with interactive 3D gift box, festive color themes, friendship memory cards, and musical celebration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

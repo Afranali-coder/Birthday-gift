@@ -1,0 +1,332 @@
+<div
+  class="relative min-h-screen text-slate-100 overflow-x-hidden transition-colors duration-700 select-text"
+  [style.background]="'radial-gradient(ellipse at 50% 30%, ' + themeService.currentTheme().bgMid + ' 0%, ' + themeService.currentTheme().bgStart + ' 50%, ' + themeService.currentTheme().bgEnd + ' 100%)'"
+>
+  <!-- Ambient Colorful Floating Glow Orbs in Background -->
+  <div
+    class="fixed top-12 left-10 w-96 h-96 rounded-full blur-[120px] pointer-events-none opacity-30 transition-all duration-1000"
+    [style.background]="themeService.currentTheme().primary"
+  ></div>
+  <div
+    class="fixed bottom-20 right-10 w-96 h-96 rounded-full blur-[140px] pointer-events-none opacity-25 transition-all duration-1000"
+    [style.background]="themeService.currentTheme().secondary"
+  ></div>
+  <div
+    class="fixed top-1/2 left-1/3 -translate-y-1/2 w-80 h-80 rounded-full blur-[130px] pointer-events-none opacity-20 transition-all duration-1000"
+    [style.background]="themeService.currentTheme().accent"
+  ></div>
+
+  <!-- Subtle festive geometric pattern overlay -->
+  <div
+    class="fixed inset-0 pointer-events-none opacity-15"
+    style="background-image: radial-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px); background-size: 28px 28px;"
+  ></div>
+
+  <!-- TOP BAR (Single-row clean Top Bar Contract) -->
+  <header class="relative z-30 flex items-center justify-between gap-4 px-4 sm:px-8 py-4 border-b border-white/10 backdrop-blur-md bg-slate-950/40">
+    <!-- Brand Wordmark -->
+    <div class="flex items-center gap-2.5">
+      <div
+        class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-lg shadow-lg border border-white/20"
+        [style.background]="themeService.currentTheme().primary"
+        [style.color]="'#090a1a'"
+      >
+        <span>🎁</span>
+      </div>
+      <div>
+        <h1 class="text-base sm:text-lg font-black tracking-tight text-white whitespace-nowrap">
+          Firoz's Birthday Surprise
+        </h1>
+        <p class="text-[11px] text-slate-300 font-medium hidden sm:block">
+          Dosti Ki Yaadein & Celebrations
+        </p>
+      </div>
+    </div>
+
+    <!-- Active Theme Badge & Controls -->
+    <div class="flex items-center gap-2">
+      <!-- Active Theme Indicator -->
+      <div
+        class="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold border backdrop-blur-sm"
+        [style.borderColor]="themeService.currentTheme().cardBorder"
+        [style.background]="themeService.currentTheme().cardBg"
+      >
+        <span class="w-2.5 h-2.5 rounded-full" [style.background]="themeService.currentTheme().primary"></span>
+        <span class="text-slate-200">{{ themeService.currentTheme().name }}</span>
+      </div>
+
+      <!-- Quick Audio Toggle -->
+      <button
+        (click)="soundService.toggleMute()"
+        class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 text-xs font-semibold flex items-center gap-1.5 border border-white/15 transition-all cursor-pointer"
+        [title]="soundService.isMuted() ? 'Unmute Audio' : 'Mute Audio'"
+      >
+        <mat-icon class="!w-4 !h-4 !text-base">
+          {{ soundService.isMuted() ? 'volume_off' : 'volume_up' }}
+        </mat-icon>
+        <span class="hidden md:inline">{{ soundService.isMuted() ? 'Muted' : 'Sound On' }}</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <main class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-6 pb-28 flex flex-col gap-12">
+
+    <!-- 1. ENTRY & 3D GIFT UNWRAP SECTION -->
+    <section class="flex flex-col items-center text-center pt-2 sm:pt-6">
+      <!-- Festive Header Banner -->
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber-400/30 bg-amber-400/10 backdrop-blur-md mb-4 shadow-sm animate-pulse">
+        <span class="text-sm">✨</span>
+        <span class="text-xs sm:text-sm font-bold text-amber-300 tracking-wide">
+          Special Day for a Special Yaar
+        </span>
+        <span class="text-sm">✨</span>
+      </div>
+
+      <!-- Primary Hero Headline -->
+      <h2 class="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white leading-tight max-w-3xl mb-3">
+        Firoz's Birthday <span class="shimmer-text">Surprise!</span>
+      </h2>
+
+      <!-- Subtitle in Hinglish/Urdu/Hindi as original -->
+      <p class="text-base sm:text-lg text-slate-300 max-w-xl font-medium leading-relaxed mb-4">
+        Ek choti si cheez tere liye bhai, pehle <strong class="text-amber-300 font-bold">gift ko ghuma ke dekh</strong> fir open kariyo! 🎁
+      </p>
+
+      <!-- Quick Color Themes Bar on Landing -->
+      <div class="flex items-center justify-center gap-2 mb-4 p-2 rounded-2xl bg-black/30 backdrop-blur-md border border-white/10">
+        <span class="text-xs text-slate-300 font-bold mr-1">Choose Colors:</span>
+        @for (t of themeService.themes; track t.id; let idx = $index) {
+          <button
+            (click)="themeService.setTheme(idx); soundService.playPopSound();"
+            class="px-2.5 py-1 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer border"
+            [class.border-white]="themeService.activeThemeIndex() === idx"
+            [class.border-transparent]="themeService.activeThemeIndex() !== idx"
+            [style.background]="themeService.activeThemeIndex() === idx ? t.primary : 'rgba(255,255,255,0.08)'"
+            [style.color]="themeService.activeThemeIndex() === idx ? '#090a1a' : '#ffffff'"
+          >
+            <span class="w-2.5 h-2.5 rounded-full" [style.background]="t.primary"></span>
+            <span class="hidden sm:inline">{{ t.name }}</span>
+          </button>
+        }
+      </div>
+
+      <!-- 3D INTERACTIVE GIFT CANVAS CONTAINER -->
+      <div class="relative w-full max-w-xl h-[330px] sm:h-[420px] rounded-3xl overflow-hidden border border-white/15 shadow-2xl backdrop-blur-sm bg-gradient-to-b from-white/5 to-transparent">
+        <app-gift-canvas
+          #giftCanvasComp
+          (opened)="onGiftOpened()"
+        />
+      </div>
+
+      <!-- ACTION BUTTON: OPEN KAR BHAI -->
+      <div class="mt-6 flex flex-col items-center gap-3">
+        @if (!isVaultVisible()) {
+          <button
+            (click)="openGiftFromButton()"
+            class="group px-8 py-4 rounded-2xl text-base sm:text-lg font-black tracking-wide flex items-center gap-3 transition-all duration-300 hover:scale-105 active:scale-95 shadow-2xl cursor-pointer"
+            [style.background]="themeService.currentTheme().primary"
+            [style.color]="'#090a1a'"
+            [style.boxShadow]="'0 15px 40px -5px ' + themeService.currentTheme().primary + '90'"
+          >
+            <mat-icon class="!w-6 !h-6 !text-2xl transition-transform group-hover:rotate-12">card_giftcard</mat-icon>
+            <span>Open Kar Bhai</span>
+            <mat-icon class="!w-5 !h-5 !text-xl transition-transform group-hover:translate-x-1">arrow_forward</mat-icon>
+          </button>
+          <span class="text-xs text-slate-400">Box ko tap karke bhi khol sakte ho!</span>
+        } @else {
+          <div class="flex items-center gap-3">
+            <a
+              href="#vault-section"
+              class="px-6 py-3 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-sm font-bold flex items-center gap-2 hover:bg-emerald-500/30 transition-all cursor-pointer"
+            >
+              <mat-icon class="!w-5 !h-5 !text-lg">arrow_downward</mat-icon>
+              <span>Celebration Vault Khul Gaya! Dekho Neeche</span>
+            </a>
+            <button
+              (click)="repackGift()"
+              class="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 text-xs font-semibold flex items-center gap-1.5 border border-white/15 transition-all cursor-pointer"
+              title="Pack Gift Again"
+            >
+              <mat-icon class="!w-4 !h-4 !text-base">replay</mat-icon>
+              <span>Pack Again</span>
+            </button>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- 2. CELEBRATION VAULT SECTION -->
+    <section
+      id="vault-section"
+      class="flex flex-col gap-8 transition-all duration-700 scroll-mt-6"
+      [class.opacity-100]="isVaultVisible()"
+      [class.translate-y-0]="isVaultVisible()"
+    >
+      <!-- VAULT HERO CARD -->
+      <article
+        class="relative overflow-hidden rounded-3xl p-6 sm:p-10 border transition-all duration-500 backdrop-blur-2xl shadow-2xl"
+        [style.background]="themeService.currentTheme().cardBg"
+        [style.borderColor]="themeService.currentTheme().cardBorder"
+      >
+        <!-- Card top badge -->
+        <div class="flex items-center justify-between border-b pb-4 mb-6" [style.borderColor]="themeService.currentTheme().cardBorder">
+          <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-300">
+            <span class="text-amber-400 font-extrabold text-base">✦</span>
+            <span>Tere Liye, Mere Bhai</span>
+            <span class="text-amber-400 font-extrabold text-base">✦</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button
+              (click)="repackGift()"
+              class="text-xs text-slate-400 hover:text-white flex items-center gap-1 transition-colors cursor-pointer"
+            >
+              <mat-icon class="!w-4 !h-4 !text-base">arrow_upward</mat-icon>
+              <span>Top Par Jao</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Big Birthday Vault Title -->
+        <div class="flex flex-col gap-2 mb-6 text-center sm:text-left">
+          <span class="text-xs sm:text-sm font-bold uppercase tracking-wider text-emerald-400">
+            Aaj Ka Din Tere Naam
+          </span>
+          <h3 class="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight leading-none">
+            Happy Birthday, <span class="shimmer-text">Firoz!</span> 🎂✨
+          </h3>
+          <p class="text-sm sm:text-base text-slate-300 max-w-2xl mt-1">
+            Dosti ki misaal, cricket ka star, aur har lamha hasane wala sabse azeez dost!
+          </p>
+        </div>
+
+        <!-- HEARTFELT DUA & SHAYARI CAROUSEL -->
+        <div
+          class="relative overflow-hidden rounded-2xl p-6 sm:p-8 my-4 border text-center transition-all duration-300"
+          [style.background]="'linear-gradient(135deg, ' + themeService.currentTheme().primary + '18, ' + themeService.currentTheme().secondary + '18)'"
+          [style.borderColor]="themeService.currentTheme().cardBorder"
+        >
+          <!-- Giant quotation mark background -->
+          <div class="absolute -top-6 right-4 text-7xl sm:text-8xl font-serif text-white/5 pointer-events-none select-none">
+            “
+          </div>
+
+          <div class="relative z-10 flex flex-col items-center">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-lg">{{ shayaris[activeShayariIndex()].emoji }}</span>
+              <span class="text-xs font-bold uppercase tracking-widest" [style.color]="themeService.currentTheme().primary">
+                Dil Se Dua & Shayari
+              </span>
+            </div>
+
+            <!-- Shayari Quote -->
+            <p class="text-lg sm:text-2xl md:text-3xl font-bold text-white tracking-tight leading-relaxed max-w-2xl whitespace-pre-line my-2">
+              {{ shayaris[activeShayariIndex()].quote }}
+            </p>
+
+            <!-- Note -->
+            <p class="text-xs sm:text-sm text-slate-300 italic mt-1 mb-4">
+              — {{ shayaris[activeShayariIndex()].authorNote }}
+            </p>
+
+            <!-- Next Shayari Button -->
+            <button
+              (click)="nextShayari()"
+              class="px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 border border-white/20 bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer shadow"
+            >
+              <mat-icon class="!w-4 !h-4 !text-base text-amber-400">autorenew</mat-icon>
+              <span>Agli Shayari Dekho ({{ activeShayariIndex() + 1 }}/{{ shayaris.length }})</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3. INTERACTIVE BIRTHDAY CAKE & CANDLE SECTION -->
+        <div class="my-8">
+          <app-cake-candles />
+        </div>
+
+        <!-- 4. FIROZ'S SPECIAL FRIENDSHIP TRAITS / HALL OF FAME -->
+        <div class="my-8 flex flex-col gap-4">
+          <div class="flex items-center gap-2">
+            <mat-icon class="text-amber-400 !w-5 !h-5 !text-lg">military_tech</mat-icon>
+            <h4 class="text-lg sm:text-xl font-bold text-white tracking-tight">
+              Kyun Firoz Hai Sabse Khas? 🏆
+            </h4>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+            <div
+              class="p-4 rounded-2xl border backdrop-blur-md flex flex-col gap-1.5 transition-transform hover:scale-[1.02]"
+              [style.background]="'rgba(255, 183, 3, 0.08)'"
+              [style.borderColor]="'rgba(255, 183, 3, 0.3)'"
+            >
+              <span class="text-2xl">🏏</span>
+              <h5 class="text-sm font-bold text-white">Cricket Ka Baazigar</h5>
+              <p class="text-xs text-slate-300">
+                Match chahe kaisa bhi ho, boundary maarne ka jazba aur ladai hamesha ready!
+              </p>
+            </div>
+
+            <div
+              class="p-4 rounded-2xl border backdrop-blur-md flex flex-col gap-1.5 transition-transform hover:scale-[1.02]"
+              [style.background]="'rgba(255, 0, 110, 0.08)'"
+              [style.borderColor]="'rgba(255, 0, 110, 0.3)'"
+            >
+              <span class="text-2xl">🏸</span>
+              <h5 class="text-sm font-bold text-white">Night Badminton Pro</h5>
+              <p class="text-xs text-slate-300">
+                Thand ke mausam mein road par Khalid aur mere sath endless smash rallies!
+              </p>
+            </div>
+
+            <div
+              class="p-4 rounded-2xl border backdrop-blur-md flex flex-col gap-1.5 transition-transform hover:scale-[1.02]"
+              [style.background]="'rgba(0, 245, 212, 0.08)'"
+              [style.borderColor]="'rgba(0, 245, 212, 0.3)'"
+            >
+              <span class="text-2xl">😂</span>
+              <h5 class="text-sm font-bold text-white">Infinite Roasts</h5>
+              <p class="text-xs text-slate-300">
+                Aisi bakchodi aur mazaak jo koi aur samajh hi nahi sakta, bas hum dono hi haste hain!
+              </p>
+            </div>
+
+            <div
+              class="p-4 rounded-2xl border backdrop-blur-md flex flex-col gap-1.5 transition-transform hover:scale-[1.02]"
+              [style.background]="'rgba(131, 56, 236, 0.08)'"
+              [style.borderColor]="'rgba(131, 56, 236, 0.3)'"
+            >
+              <span class="text-2xl">🤝</span>
+              <h5 class="text-sm font-bold text-white">Har Pal Ka Saathi</h5>
+              <p class="text-xs text-slate-300">
+                Wasim Sir ki coaching se shuru hua safar aaj tak har mod par mazboot hai!
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. FRIENDSHIP MEMORY TIMELINE -->
+        <div class="my-6">
+          <app-timeline-memory />
+        </div>
+
+        <!-- FOOTER INSIDE CARD -->
+        <footer class="mt-10 pt-6 border-t border-white/10 text-center flex flex-col items-center gap-2 text-xs text-slate-400">
+          <div class="flex items-center gap-2 text-sm font-bold text-slate-200">
+            <span>Made with 🤍 for my best friend Firoz</span>
+            <span>·</span>
+            <span class="text-amber-400 font-bold">Dosti Zindabad!</span>
+          </div>
+          <p class="text-[11px] text-slate-500">
+            Click anywhere on the screen for color bursts 🎉
+          </p>
+        </footer>
+      </article>
+    </section>
+
+  </main>
+
+  <!-- PINNED BOTTOM COLOR THEMES & CELEBRATION DOCK -->
+  <app-theme-switcher />
+</div>

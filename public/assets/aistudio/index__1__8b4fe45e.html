@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101923">
+  <meta name="description" content="Firoz ke liye ek chota sa birthday surprise, dosti ki yaadon ke saath.">
+  <title>Firoz's Birthday Surprise</title>
+  <link rel="stylesheet" href="/theme.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--color-bg);
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      overflow-x: hidden;
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-body);
+    }
+
+    button {
+      color: inherit;
+      font: inherit;
+    }
+
+    .page-shell {
+      position: relative;
+      min-height: 100vh;
+      isolation: isolate;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 50% 42%, rgba(255, 179, 0, 0.11), transparent 34rem),
+        radial-gradient(ellipse at 8% 90%, rgba(0, 210, 160, 0.06), transparent 29rem),
+        var(--color-bg);
+    }
+
+    .page-shell::before {
+      position: absolute;
+      z-index: -1;
+      inset: 0;
+      background-image: radial-gradient(rgba(245, 241, 232, 0.15) 0.7px, transparent 0.7px);
+      background-size: 34px 34px;
+      content: "";
+      mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+      pointer-events: none;
+    }
+
+    .topbar {
+      position: absolute;
+      z-index: 5;
+      top: 0;
+      left: 0;
+      display: flex;
+      width: 100%;
+      align-items: center;
+      justify-content: center;
+      padding: 1.4rem 1.25rem;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--color-text);
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+    }
+
+    .brand-icon {
+      display: grid;
+      width: 2.2rem;
+      height: 2.2rem;
+      place-items: center;
+      border: 1px solid rgba(255, 179, 0, 0.38);
+      border-radius: var(--radius-small);
+      background: rgba(255, 179, 0, 0.09);
+      color: var(--color-primary);
+      font-size: 1rem;
+    }
+
+    .entry-view {
+      display: flex;
+      min-height: 100svh;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6.6rem 1.25rem 3rem;
+      transition: opacity 650ms ease, filter 650ms ease, transform 750ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    .entry-view.is-leaving {
+      opacity: 0;
+      filter: blur(8px);
+      transform: scale(1.025);
+      pointer-events: none;
+    }
+
+    .entry-content {
+      display: flex;
+      width: min(100%, 52rem);
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .entry-title {
+      margin: 0;
+      color: var(--color-text);
+      font-family: var(--font-heading);
+      font-size: clamp(2.2rem, 6.2vw, 4.7rem);
+      font-weight: 800;
+      letter-spacing: -0.065em;
+      line-height: 1.04;
+    }
+
+    .entry-title span {
+      color: var(--color-primary);
+    }
+
+    .entry-copy {
+      max-width: 34rem;
+      margin: 1rem 0 0;
+      color: var(--color-muted);
+      font-size: clamp(0.96rem, 2vw, 1.08rem);
+      line-height: 1.75;
+    }
+
+    .scene-wrap {
+      position: relative;
+      width: min(100%, 44rem);
+      height: clamp(270px, 48vw, 430px);
+      margin: 0.3rem 0 -0.25rem;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    .scene-wrap:active {
+      cursor: grabbing;
+    }
+
+    #gift-scene {
+      display: block;
+      width: 100%;
+      height: 100%;
+      outline: none;
+    }
+
+    #gift-scene:focus-visible,
+    .open-button:focus-visible {
+      outline: 3px solid var(--color-mint);
+      outline-offset: 5px;
+    }
+
+    .open-button {
+      display: inline-flex;
+      min-height: 3.7rem;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 0.9rem 1.7rem;
+      border: 1px solid rgba(255, 208, 106, 0.78);
+      border-radius: var(--radius-small);
+      background: var(--color-primary);
+      box-shadow: var(--shadow-glow);
+      color: var(--color-primary-contrast);
+      cursor: pointer;
+      font-size: 0.98rem;
+      font-weight: 800;
+      transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+      animation: button-glow 2.8s ease-in-out infinite;
+    }
+
+    .open-button:hover {
+      background: var(--color-gold-soft);
+      box-shadow: 0 0 48px rgba(255, 179, 0, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .open-button:disabled {
+      cursor: wait;
+      animation: none;
+    }
+
+    .open-button span:last-child {
+      font-size: 1.1rem;
+      transition: transform 180ms ease;
+    }
+
+    .open-button:hover span:last-child {
+      transform: translateX(4px);
+    }
+
+    @keyframes button-glow {
+      50% {
+        box-shadow: 0 0 48px rgba(255, 179, 0, 0.24);
+      }
+    }
+
+    .vault-view {
+      position: absolute;
+      z-index: 3;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4.75rem clamp(1rem, 4vw, 3rem) 2rem;
+      opacity: 0;
+      filter: blur(8px);
+      transform: translateY(18px) scale(0.99);
+      transition: opacity 700ms ease, filter 700ms ease, transform 800ms cubic-bezier(0.2, 0.7, 0.2, 1);
+      pointer-events: none;
+    }
+
+    .vault-view.is-visible {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .vault-card {
+      width: min(100%, 67rem);
+      max-height: min(88vh, 900px);
+      overflow: auto;
+      border: 1px solid var(--color-panel-border);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      box-shadow: 0 28px 100px rgba(0, 0, 0, 0.3), inset 0 1px rgba(245, 241, 232, 0.06);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      scrollbar-color: rgba(255, 179, 0, 0.45) transparent;
+      scrollbar-width: thin;
+    }
+
+    .vault-bar {
+      display: flex;
+      min-height: 3.5rem;
+      align-items: center;
+      justify-content: center;
+      padding: 0.8rem 1.25rem;
+      border-bottom: 1px solid var(--color-panel-border);
+      color: var(--color-muted);
+      font-size: 0.84rem;
+      letter-spacing: 0.01em;
+    }
+
+    .vault-bar span {
+      color: var(--color-coral);
+    }
+
+    .vault-content {
+      padding: clamp(1.5rem, 4.4vw, 3.2rem);
+    }
+
+    .greeting-kicker {
+      margin: 0 0 0.8rem;
+      color: var(--color-mint);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .vault-title {
+      max-width: 54rem;
+      margin: 0;
+      color: var(--color-text);
+      font-family: var(--font-heading);
+      font-size: clamp(2.6rem, 7vw, 5rem);
+      font-weight: 800;
+      letter-spacing: -0.07em;
+      line-height: 0.98;
+    }
+
+    .vault-title span {
+      color: var(--color-primary);
+    }
+
+    .quote-card {
+      position: relative;
+      margin: 2rem 0 2.6rem;
+      padding: clamp(1.5rem, 4vw, 2.4rem);
+      overflow: hidden;
+      border: 1px solid rgba(255, 179, 0, 0.25);
+      border-radius: var(--radius-small);
+      background: linear-gradient(120deg, rgba(255, 179, 0, 0.11), rgba(255, 94, 98, 0.07) 57%, rgba(0, 210, 160, 0.06));
+      text-align: center;
+    }
+
+    .quote-card::before {
+      position: absolute;
+      top: -2.4rem;
+      right: 1rem;
+      color: rgba(255, 179, 0, 0.12);
+      content: "“";
+      font-family: var(--font-heading);
+      font-size: 9rem;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .quote-label {
+      position: relative;
+      margin: 0 0 0.85rem;
+      color: var(--color-primary);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .quote-text {
+      position: relative;
+      margin: 0;
+      color: var(--color-text);
+      font-family: var(--font-heading);
+      font-size: clamp(1.1rem, 2.8vw, 1.65rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.8;
+    }
+
+    .timeline-heading {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      margin: 0 0 1.7rem;
+      color: var(--color-text);
+      font-family: var(--font-heading);
+      font-size: clamp(1.3rem, 3vw, 1.75rem);
+      font-weight: 750;
+      letter-spacing: -0.035em;
+    }
+
+    .timeline-heading::after {
+      height: 1px;
+      flex: 1;
+      background: var(--color-panel-border);
+      content: "";
+    }
+
+    .timeline {
+      position: relative;
+      display: grid;
+      gap: 0;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .timeline::before {
+      position: absolute;
+      top: 0.55rem;
+      bottom: 2rem;
+      left: 0.43rem;
+      width: 1px;
+      background: linear-gradient(var(--color-primary), var(--color-coral), var(--color-mint));
+      content: "";
+      opacity: 0.65;
+    }
+
+    .timeline-item {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1rem 1fr;
+      gap: 1rem;
+      padding: 0 0 1.65rem;
+    }
+
+    .timeline-item:last-child {
+      padding-bottom: 0;
+    }
+
+    .timeline-marker {
+      z-index: 1;
+      width: 0.88rem;
+      height: 0.88rem;
+      margin-top: 0.16rem;
+      border: 2px solid var(--color-primary);
+      border-radius: 50%;
+      background: var(--color-bg);
+      box-shadow: 0 0 14px rgba(255, 179, 0, 0.18);
+    }
+
+    .timeline-item:nth-child(2) .timeline-marker {
+      border-color: var(--color-coral);
+      box-shadow: 0 0 14px rgba(255, 94, 98, 0.18);
+    }
+
+    .timeline-item:nth-child(3) .timeline-marker {
+      border-color: var(--color-mint);
+      box-shadow: 0 0 14px rgba(0, 210, 160, 0.18);
+    }
+
+    .timeline-title {
+      margin: 0;
+      color: var(--color-text);
+      font-size: 1.02rem;
+      font-weight: 750;
+      letter-spacing: -0.02em;
+    }
+
+    .timeline-copy {
+      max-width: 49rem;
+      margin: 0.45rem 0 0;
+      color: var(--color-muted);
+      font-size: 0.91rem;
+      line-height: 1.8;
+    }
+
+    .vault-footer {
+      margin-top: 2.3rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--color-panel-border);
+      color: var(--color-muted);
+      font-size: 0.84rem;
+      text-align: center;
+    }
+
+    #celebration-canvas {
+      position: fixed;
+      z-index: 8;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        padding-top: 1rem;
+      }
+
+      .brand {
+        font-size: 0.88rem;
+      }
+
+      .entry-view {
+        padding-top: 5.9rem;
+        padding-bottom: 2.25rem;
+      }
+
+      .entry-copy {
+        max-width: 28rem;
+      }
+
+      .scene-wrap {
+        height: clamp(250px, 76vw, 350px);
+        margin-top: 0.35rem;
+      }
+
+      .vault-view {
+        align-items: flex-start;
+        padding: 4.5rem 0.7rem 0.8rem;
+      }
+
+      .vault-card {
+        max-height: calc(100svh - 5.3rem);
+      }
+
+      .vault-content {
+        padding: 1.45rem 1.1rem 1.2rem;
+      }
+
+      .quote-card {
+        margin: 1.65rem 0 2rem;
+      }
+
+      .timeline-item {
+        gap: 0.8rem;
+      }
+
+      .vault-footer {
+        margin-top: 1.8rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+  <main class="page-shell">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-icon" aria-hidden="true">✳</span>
+        <span>Firoz's Birthday Surprise</span>
+      </div>
+    </header>
+
+    <section class="entry-view" id="entry-view" aria-labelledby="entry-title">
+      <div class="entry-content">
+        <h1 class="entry-title" id="entry-title">Firoz's Birthday <span>Surprise</span></h1>
+        <p class="entry-copy">Ek choti si cheez tere liye, pehle gift ko ghuma ke dekh fir open kariyo!</p>
+        <div class="scene-wrap" aria-label="Interactive 3D birthday gift. Ghuma ke dekh, phir open kar.">
+          <canvas id="gift-scene" tabindex="0" role="button" aria-label="Gift kholne ke liye tap ya enter karo"></canvas>
+        </div>
+        <button class="open-button" id="open-button" type="button">
+          <span>Open Kar Bhai</span>
+          <span aria-hidden="true">↗</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="vault-view" id="vault-view" aria-labelledby="vault-title" aria-hidden="true">
+      <article class="vault-card" tabindex="-1">
+        <div class="vault-bar">Tere liye, bhai <span>&nbsp;✦</span></div>
+        <div class="vault-content">
+          <p class="greeting-kicker">Aaj ka din tere naam</p>
+          <h2 class="vault-title" id="vault-title">Happy Birthday,<br><span>Firoz!</span></h2>
+
+          <blockquote class="quote-card">
+            <p class="quote-label">Dil se ek dua</p>
+            <p class="quote-text">Khuda kare ke naya saal tum ko raas aaye,<br>Jo chahte ho wo sab tumhare paas aaye.</p>
+          </blockquote>
+
+          <h3 class="timeline-heading">Hamari Dosti Ke Kuch Khas Pal</h3>
+          <ol class="timeline">
+            <li class="timeline-item">
+              <span class="timeline-marker" aria-hidden="true"></span>
+              <div>
+                <h4 class="timeline-title">Wasim Sir Ki Coaching Se Shuruat</h4>
+                <p class="timeline-copy">Teri meri dosti tab shuru hui jab main Wasim Sir ki coaching mein tha. Fir jab main tere ghar ke paas shift hua, toh hamari dosti aur zyada gehri ho gayi.</p>
+              </div>
+            </li>
+            <li class="timeline-item">
+              <span class="timeline-marker" aria-hidden="true"></span>
+              <div>
+                <h4 class="timeline-title">Cricket Aur Infinite Mazak</h4>
+                <p class="timeline-copy">Saath mein khub cricket khelna aur ek dusre ka mazaak udaana (jo aaj bhi hum bina ruke karte hain!). Tere sath ki wo sabhi bakchodi sabse best hai.</p>
+              </div>
+            </li>
+            <li class="timeline-item">
+              <span class="timeline-marker" aria-hidden="true"></span>
+              <div>
+                <h4 class="timeline-title">Delhi Shift Aur Khalid Ke Sath Badminton</h4>
+                <p class="timeline-copy">Jab main Delhi shift hua, toh tune aur Khalid ne hi mujhe sabse pehle yaad kiya. Hum teeno milkar thand ke dino mein tere ghar ke samne wali road par raat ko badminton khelte the!</p>
+              </div>
+            </li>
+          </ol>
+
+          <footer class="vault-footer">Made with 🤍 for my best friend</footer>
+        </div>
+      </article>
+    </section>
+
+    <canvas id="celebration-canvas" aria-hidden="true"></canvas>
+  </main>
+
+  <script>
+    (() => {
+      const entryView = document.getElementById("entry-view");
+      const vaultView = document.getElementById("vault-view");
+      const vaultCard = vaultView.querySelector(".vault-card");
+      const openButton = document.getElementById("open-button");
+      const giftCanvas = document.getElementById("gift-scene");
+      const celebrationCanvas = document.getElementById("celebration-canvas");
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const rootStyles = getComputedStyle(document.documentElement);
+      const palette = {
+        gold: rootStyles.getPropertyValue("--color-primary").trim(),
+        coral: rootStyles.getPropertyValue("--color-coral").trim(),
+        mint: rootStyles.getPropertyValue("--color-mint").trim(),
+        softGold: rootStyles.getPropertyValue("--color-gold-soft").trim(),
+        text: rootStyles.getPropertyValue("--color-text").trim()
+      };
+      const colorNumber = (value) => Number.parseInt(value.replace("#", ""), 16);
+
+      let renderer;
+      let scene;
+      let camera;
+      let gift;
+      let lid;
+      let giftBody;
+      let opened = false;
+      let dragging = false;
+      let moved = false;
+      let startPoint = {
+        x: 0,
+        y: 0
+      };
+      let previousPoint = {
+        x: 0,
+        y: 0
+      };
+      let orbit = {
+        x: 0,
+        y: 0
+      };
+      let orbitTarget = {
+        x: 0,
+        y: 0
+      };
+      let stars;
+      let giftParticles = [];
+      let openingStartedAt = 0;
+      const openingDuration = reducedMotion ? 180 : 1050;
+      const sceneStartedAt = performance.now();
+
+      function makeMaterial(color, roughness = 0.32, metalness = 0.2) {
+        return new THREE.MeshStandardMaterial({
+          color: colorNumber(color),
+          roughness,
+          metalness
+        });
+      }
+
+      function resizeScene() {
+        if (!renderer || !camera) return;
+        const bounds = giftCanvas.getBoundingClientRect();
+        const width = Math.max(bounds.width, 1);
+        const height = Math.max(bounds.height, 1);
+        renderer.setSize(width, height, false);
+        camera.aspect = width / height;
+        camera.position.z = width < 520 ? 8.4 : 7.2;
+        camera.updateProjectionMatrix();
+      }
+
+      function createScene() {
+        if (!window.THREE) {
+          giftCanvas.setAttribute("aria-label", "Gift kholne ke liye Open Kar Bhai button dabao");
+          return;
+        }
+
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+        camera.position.set(0, 0.2, 7.2);
+        renderer = new THREE.WebGLRenderer({
+          canvas: giftCanvas,
+          alpha: true,
+          antialias: true
+        });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.15;
+
+        scene.add(new THREE.AmbientLight(0xffffff, 1.35));
+
+        const goldLight = new THREE.PointLight(colorNumber(palette.softGold), 3.1, 18);
+        goldLight.position.set(-3, 4, 5);
+        scene.add(goldLight);
+
+        const mintLight = new THREE.PointLight(colorNumber(palette.mint), 1.35, 14);
+        mintLight.position.set(3, -2, -3);
+        scene.add(mintLight);
+
+        const coralLight = new THREE.PointLight(colorNumber(palette.coral), 1.2, 14);
+        coralLight.position.set(4, 2, 3);
+        scene.add(coralLight);
+
+        const starPositions = [];
+        const starColors = [];
+        const starPalette = [palette.gold, palette.mint, palette.coral, palette.text].map(colorNumber);
+        for (let index = 0; index < 220; index += 1) {
+          starPositions.push(
+            (Math.random() - 0.5) * 13,
+            (Math.random() - 0.5) * 8,
+            (Math.random() - 0.5) * 7 - 2
+          );
+          const starColor = new THREE.Color(starPalette[index % starPalette.length]);
+          starColors.push(starColor.r, starColor.g, starColor.b);
+        }
+
+        const starGeometry = new THREE.BufferGeometry();
+        starGeometry.setAttribute("position", new THREE.Float32BufferAttribute(starPositions, 3));
+        starGeometry.setAttribute("color", new THREE.Float32BufferAttribute(starColors, 3));
+        stars = new THREE.Points(starGeometry, new THREE.PointsMaterial({
+          size: 0.035,
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.72
+        }));
+        scene.add(stars);
+
+        gift = new THREE.Group();
+        scene.add(gift);
+
+        const boxWidth = 1.9;
+        const boxHeight = 1.48;
+        const boxDepth = 1.55;
+        const coralMaterial = makeMaterial(palette.coral, 0.32, 0.18);
+        const goldMaterial = makeMaterial(palette.gold, 0.3, 0.32);
+        const mintMaterial = makeMaterial(palette.mint, 0.32, 0.15);
+
+        giftBody = new THREE.Mesh(
+          new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth),
+          coralMaterial
+        );
+        giftBody.position.y = -0.14;
+        gift.add(giftBody);
+
+        const frontRibbon = new THREE.Mesh(
+          new THREE.BoxGeometry(0.27, boxHeight + 0.02, boxDepth + 0.025),
+          goldMaterial
+        );
+        frontRibbon.position.y = -0.14;
+        gift.add(frontRibbon);
+
+        const crossRibbon = new THREE.Mesh(
+          new THREE.BoxGeometry(boxWidth + 0.025, boxHeight + 0.02, 0.27),
+          goldMaterial
+        );
+        crossRibbon.position.y = -0.14;
+        gift.add(crossRibbon);
+
+        lid = new THREE.Group();
+        lid.position.set(0, 0.62, 0);
+        gift.add(lid);
+
+        const lidBase = new THREE.Mesh(
+          new THREE.BoxGeometry(boxWidth + 0.18, 0.38, boxDepth + 0.18),
+          makeMaterial(palette.coral, 0.28, 0.22)
+        );
+        lidBase.position.y = 0.03;
+        lid.add(lidBase);
+
+        const lidRibbon = new THREE.Mesh(
+          new THREE.BoxGeometry(0.29, 0.4, boxDepth + 0.2),
+          goldMaterial
+        );
+        lidRibbon.position.y = 0.03;
+        lid.add(lidRibbon);
+
+        const lidCrossRibbon = new THREE.Mesh(
+          new THREE.BoxGeometry(boxWidth + 0.2, 0.4, 0.29),
+          goldMaterial
+        );
+        lidCrossRibbon.position.y = 0.03;
+        lid.add(lidCrossRibbon);
+
+        for (const direction of [-1, 1]) {
+          const loop = new THREE.Mesh(
+            new THREE.TorusGeometry(0.27, 0.07, 8, 24, Math.PI * 1.8),
+            goldMaterial
+          );
+          loop.position.set(direction * 0.21, 0.36, 0);
+          loop.rotation.z = direction * 0.45;
+          lid.add(loop);
+        }
+
+        const bowCenter = new THREE.Mesh(
+          new THREE.SphereGeometry(0.105, 16, 12),
+          mintMaterial
+        );
+        bowCenter.position.set(0, 0.33, 0);
+        lid.add(bowCenter);
+
+        const glow = new THREE.Mesh(
+          new THREE.CircleGeometry(1.55, 64),
+          new THREE.MeshBasicMaterial({
+            color: colorNumber(palette.gold),
+            transparent: true,
+            opacity: 0.13,
+            side: THREE.DoubleSide
+          })
+        );
+        glow.rotation.x = -Math.PI / 2;
+        glow.position.y = -1.02;
+        gift.add(glow);
+
+        resizeScene();
+        window.addEventListener("resize", resizeScene, {
+          passive: true
+        });
+        requestAnimationFrame(animateScene);
+      }
+
+      function updateGiftOpening(now) {
+        if (!opened || !lid) return;
+        const progress = Math.min((now - openingStartedAt) / openingDuration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        lid.position.set(
+          Math.sin(progress * Math.PI * 1.35) * 1.25,
+          0.62 + eased * 4.9,
+          -eased * 3.5
+        );
+        lid.rotation.set(eased * 1.25, eased * 2.8, eased * 1.2);
+        if (giftBody) {
+          giftBody.scale.set(1 + eased * 0.12, 1 + eased * 0.08, 1 + eased * 0.12);
+        }
+      }
+
+      function animateScene(now) {
+        if (!renderer) return;
+        const elapsed = (now - sceneStartedAt) / 1000;
+        orbit.x += (orbitTarget.x - orbit.x) * 0.075;
+        orbit.y += (orbitTarget.y - orbit.y) * 0.075;
+
+        if (gift && !opened) {
+          gift.rotation.y = elapsed * 0.18 + orbit.y;
+          gift.rotation.x = Math.sin(elapsed * 0.42) * 0.045 + orbit.x;
+          gift.position.y = Math.sin(elapsed * 0.9) * 0.11;
+          lid.rotation.z = Math.sin(elapsed * 1.1) * 0.025;
+        }
+
+        updateGiftOpening(now);
+        if (stars) stars.rotation.y = elapsed * 0.008;
+
+        for (let index = giftParticles.length - 1; index >= 0; index -= 1) {
+          const particle = giftParticles[index];
+          particle.velocity.y -= 0.003;
+          particle.mesh.position.add(particle.velocity);
+          particle.mesh.rotation.x += particle.spin.x;
+          particle.mesh.rotation.y += particle.spin.y;
+          particle.material.opacity -= 0.012;
+          if (particle.material.opacity <= 0) {
+            scene.remove(particle.mesh);
+            particle.geometry.dispose();
+            particle.material.dispose();
+            giftParticles.splice(index, 1);
+          }
+        }
+
+        renderer.render(scene, camera);
+        requestAnimationFrame(animateScene);
+      }
+
+      function burstGift() {
+        if (!scene || !gift) return;
+        const burstColors = [palette.gold, palette.coral, palette.mint, palette.softGold].map(colorNumber);
+
+        for (let index = 0; index < 76; index += 1) {
+          const geometry = new THREE.TetrahedronGeometry(0.035 + Math.random() * 0.055, 0);
+          const material = new THREE.MeshBasicMaterial({
+            color: burstColors[index % burstColors.length],
+            transparent: true,
+            opacity: 1
+          });
+          const mesh = new THREE.Mesh(geometry, material);
+          mesh.position.copy(gift.position);
+          mesh.position.x += (Math.random() - 0.5) * 1.8;
+          mesh.position.y += (Math.random() - 0.5) * 1.4;
+          mesh.position.z += (Math.random() - 0.5) * 1.5;
+          scene.add(mesh);
+          giftParticles.push({
+            mesh,
+            geometry,
+            material,
+            velocity: new THREE.Vector3(
+              (Math.random() - 0.5) * 0.12,
+              (Math.random() - 0.45) * 0.13,
+              (Math.random() - 0.5) * 0.1
+            ),
+            spin: {
+              x: (Math.random() - 0.5) * 0.16,
+              y: (Math.random() - 0.5) * 0.16
+            }
+          });
+        }
+      }
+
+      function openGift() {
+        if (opened) return;
+        opened = true;
+        openingStartedAt = performance.now();
+        openButton.disabled = true;
+        burstGift();
+        entryView.classList.add("is-leaving");
+
+        window.setTimeout(() => {
+          entryView.style.visibility = "hidden";
+          vaultView.setAttribute("aria-hidden", "false");
+          vaultView.classList.add("is-visible");
+          window.setTimeout(() => vaultCard.focus(), 100);
+          window.setTimeout(() => launchBurst(window.innerWidth / 2, window.innerHeight * 0.4, 1.35), 400);
+        }, reducedMotion ? 80 : 620);
+      }
+
+      function onPointerDown(event) {
+        if (opened || event.button !== undefined && event.button !== 0) return;
+        dragging = true;
+        moved = false;
+        startPoint = {
+          x: event.clientX,
+          y: event.clientY
+        };
+        previousPoint = {
+          x: event.clientX,
+          y: event.clientY
+        };
+        if (giftCanvas.setPointerCapture) giftCanvas.setPointerCapture(event.pointerId);
+      }
+
+      function onPointerMove(event) {
+        if (!dragging) return;
+        const deltaX = event.clientX - previousPoint.x;
+        const deltaY = event.clientY - previousPoint.y;
+        const totalMovement = Math.abs(event.clientX - startPoint.x) + Math.abs(event.clientY - startPoint.y);
+        if (totalMovement > 7) moved = true;
+        orbitTarget.y += deltaX * 0.008;
+        orbitTarget.x = Math.max(-0.48, Math.min(0.48, orbitTarget.x + deltaY * 0.006));
+        previousPoint = {
+          x: event.clientX,
+          y: event.clientY
+        };
+      }
+
+      function onPointerUp(event) {
+        if (!dragging) return;
+        dragging = false;
+        if (giftCanvas.releasePointerCapture && giftCanvas.hasPointerCapture?.(event.pointerId)) {
+          giftCanvas.releasePointerCapture(event.pointerId);
+        }
+        if (!moved) openGift();
+      }
+
+      giftCanvas.addEventListener("pointerdown", onPointerDown);
+      giftCanvas.addEventListener("pointermove", onPointerMove);
+      giftCanvas.addEventListener("pointerup", onPointerUp);
+      giftCanvas.addEventListener("pointercancel", () => {
+        dragging = false;
+      });
+      giftCanvas.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openGift();
+        }
+      });
+      openButton.addEventListener("click", openGift);
+
+      const context = celebrationCanvas.getContext("2d");
+      const symbols = ["{ }", "</>", "0x", "✦", "∑", "∞", "++", "★", "λ", "✓"];
+      const celebrationParticles = [];
+      let lastCelebrationFrame = 0;
+
+      function resizeCelebrationCanvas() {
+        const ratio = Math.min(window.devicePixelRatio || 1, 2);
+        celebrationCanvas.width = Math.round(window.innerWidth * ratio);
+        celebrationCanvas.height = Math.round(window.innerHeight * ratio);
+        celebrationCanvas.style.width = `${window.innerWidth}px`;
+        celebrationCanvas.style.height = `${window.innerHeight}px`;
+        context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      }
+
+      function launchBurst(x, y, scale = 1) {
+        const colors = [palette.gold, palette.coral, palette.mint, palette.softGold, palette.text];
+        const count = Math.round(34 * scale);
+
+        for (let index = 0; index < count; index += 1) {
+          const angle = Math.PI * 2 * index / count + Math.random() * 0.16;
+          const speed = (1.5 + Math.random() * 4.2) * scale;
+          celebrationParticles.push({
+            x,
+            y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: 1,
+            decay: 0.012 + Math.random() * 0.015,
+            size: 9 + Math.random() * 10,
+            spin: (Math.random() - 0.5) * 0.16,
+            rotation: Math.random() * Math.PI,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            symbol: symbols[Math.floor(Math.random() * symbols.length)],
+            isSymbol: Math.random() > 0.42
+          });
+        }
+      }
+
+      function animateCelebration(time) {
+        requestAnimationFrame(animateCelebration);
+        if (time - lastCelebrationFrame < 16) return;
+        lastCelebrationFrame = time;
+        context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+        for (let index = celebrationParticles.length - 1; index >= 0; index -= 1) {
+          const particle = celebrationParticles[index];
+          particle.x += particle.vx;
+          particle.y += particle.vy;
+          particle.vx *= 0.985;
+          particle.vy = particle.vy * 0.985 + 0.035;
+          particle.rotation += particle.spin;
+          particle.life -= particle.decay;
+
+          context.globalAlpha = Math.max(0, particle.life);
+          context.fillStyle = particle.color;
+          context.save();
+          context.translate(particle.x, particle.y);
+          context.rotate(particle.rotation);
+
+          if (particle.isSymbol) {
+            context.font = `700 ${particle.size}px ${rootStyles.getPropertyValue("--font-mono")}`;
+            context.textAlign = "center";
+            context.textBaseline = "middle";
+            context.fillText(particle.symbol, 0, 0);
+          } else {
+            context.fillRect(-particle.size / 2, -particle.size / 3, particle.size, particle.size * 0.65);
+          }
+
+          context.restore();
+          if (particle.life <= 0) celebrationParticles.splice(index, 1);
+        }
+        context.globalAlpha = 1;
+      }
+
+      document.addEventListener("pointerdown", (event) => {
+        if (!vaultView.classList.contains("is-visible")) return;
+        launchBurst(event.clientX, event.clientY);
+      });
+
+      window.addEventListener("resize", resizeCelebrationCanvas, {
+        passive: true
+      });
+      resizeCelebrationCanvas();
+      requestAnimationFrame(animateCelebration);
+      createScene();
+    })();
+
+  </script>
+</body>
+
+</html>
